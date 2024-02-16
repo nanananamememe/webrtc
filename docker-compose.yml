@@ -1,0 +1,13 @@
+services:
+  app:
+    container_name: webrtc
+    image: node
+    volumes:
+      - ./:/src
+    working_dir: /src
+    tty: true
+    stdin_open: true
+    ports:
+      - 80:80
+    environment:
+      NODE_ENV: local
