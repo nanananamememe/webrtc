@@ -1,18 +1,31 @@
 <html>
 <head>
-	<title>WebRTC(Peer) Sample</title>
-	<script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-	<script type="text/javascript" src="webrtc.js"></script>
-	<style type="text/css">
-	video {
-		width: 100%;
-	}
-	</style>
+  <title>WebRTC(Peer) Sample</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script type="text/javascript" src="webrtc.js"></script>
+  <style type="text/css">
+  video {
+    width: 400px;
+  }
+  .bgg {
+  }
+  table, tr, td {
+    border: 0 none;
+    margin: 0;
+  }
+  </style>
 </head>
 <body>
-	Local
-	<video id="localVideo" playsinline autoplay muted></video>
-	Remote
-	<video id="remoteVideo" playsinline autoplay></video>
+  <table>
+    <tr>
+      <td class="bgg">Local(<span id="localSpan"></span>)</td>
+      <td class="bgg">Remote(<span id="remoteSpan"></span>)</td>
+    </tr>
+    <tr>
+      <td><video id="localVideo" playsinline autoplay muted></video></td>
+      <td><video id="remoteVideo" playsinline autoplay></video></td>
+    </tr>
+  </table>
 </body>
 </html>
