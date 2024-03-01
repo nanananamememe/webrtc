@@ -57,6 +57,16 @@ function startVideo(localId, remoteId) {
     }).catch(e => {
       alert('Camera start error.\n\n' + e.name + ': ' + e.message);
     });
+    document.getElementById('localButton').onclick = function(){
+      navigator.mediaDevices.getDisplayMedia(constraints)
+      .then(stream => {
+        window.stream = stream;
+        localVideo.srcObject = stream;
+        socketio.emit("message", JSON.stringify({open: {local: localId, remote: remoteId}}));
+      }).catch(e => {
+        alert('Camera start error.\n\n' + e.name + ': ' + e.message);
+      });
+    }
   } else {
     alert('Your browser does not support getUserMedia API');
   }
