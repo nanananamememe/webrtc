@@ -76,31 +76,21 @@ function stopVideo() {
 }
 
 function startServerConnection(localId, remoteId) {
-  if (sc) {
-    sc.close();
+
+  var _pingTimer = setInterval(() => {
+    // 接続確認
+    socketio.emit('message', JSON.stringify({ping: 1}));
+  }, 30000);
+
+  if (socketio) {
+    socketio.close();
   }
   // サーバー接続の開始
-//  sc = new WebSocket('wss://' + location.hostname + ':' + sslPort + '/');
-//  sc.onmessage = gotMessageFromServer;
-socketio.on('message', gotMessageFromServer);
-  sc.onopen = function(event) {
-    // サーバーに接続情報を通知
-    this.send(JSON.stringify({open: {local: localId, remote: remoteId}}));
-  };
-  sc.onclose = function(event) {
-    clearInterval(this._pingTimer);
-    setTimeout(conn => {
-      if (sc === conn) {
-        // 一定時間経過後にサーバーへ再接続
-        startServerConnection(localId, remoteId);
-      }
-    }, 5000, this);
-  }
-  sc._pingTimer = setInterval(() => {
-    // 接続確認
-socketio.emit('message', JSON.stringify({ping: 1}));
-//    sc.send(JSON.stringify({ping: 1}));
-  }, 30000);
+  socketio.on('message', gotMessageFromServer);
+  socketio.emit("message", JSON.stringify({open: {local: localId, remote: remoteId}}));
+  socketio.on('close', function(){
+    clearInterval(_pingTimer);
+  });
 }
 
 function startPeerConnection(sdpType) {
@@ -108,10 +98,11 @@ function startPeerConnection(sdpType) {
   queue = new Array();
   pc = new RTCPeerConnection(peerConnectionConfig);
   pc.onicecandidate = function(event) {
+    console.log(event.candidate);
     if (event.candidate) {
+      console.log(JSON.stringify({ice: event.candidate, remote: remoteId}));
       // ICE送信
-socketio.emit('message', JSON.stringify({ice: event.candidate, remote: remoteId}));
-//      sc.send(JSON.stringify({ice: event.candidate, remote: remoteId}));
+      socketio.emit('message', JSON.stringify({ice: event.candidate, remote: remoteId}));
     }
   };
   if (window.stream) {
@@ -140,7 +131,8 @@ function stopPeerConnection() {
 }
 
 function gotMessageFromServer(message) {
-  const signal = JSON.parse(message.data);
+  const signal = JSON.parse(message);
+  console.log(signal);
   if (signal.start) {
     // サーバーからの「start」を受けてPeer接続を開始する
     startPeerConnection(signal.start);
@@ -153,8 +145,7 @@ function gotMessageFromServer(message) {
     return;
   }
   if (signal.ping) {
-socketio.emit('message', JSON.stringify({pong: 1}));
-//    sc.send(JSON.stringify({pong: 1}));
+    socketio.emit('message', JSON.stringify({pong: 1}));
     return;
   }
   if (!pc) {
@@ -191,8 +182,7 @@ socketio.emit('message', JSON.stringify({pong: 1}));
 function setDescription(description) {
   pc.setLocalDescription(description).then(() => {
     // SDP送信
-socketio.emit('message', JSON.stringify({sdp: pc.localDescription, remote: remoteId}));
-//    sc.send(JSON.stringify({sdp: pc.localDescription, remote: remoteId}));
+    socketio.emit('message', JSON.stringify({sdp: pc.localDescription, remote: remoteId}));
   }).catch(errorHandler);
 }
 
