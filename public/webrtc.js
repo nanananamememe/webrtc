@@ -25,9 +25,11 @@ window.onload = function() {
   // Remote IDと対向のLocal IDが一致するとビデオ通話を開始する
   while (!localId) {
     localId = window.prompt('Local ID', '');
+    document.getElementById("localSpan").innerHTML = localId;
   }
   while (!remoteId) {
     remoteId = window.prompt('Remote ID', '');
+    document.getElementById("remoteSpan").innerHTML = remoteId;
   }
   startVideo(localId, remoteId);
 }
