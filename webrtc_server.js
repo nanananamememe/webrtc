@@ -10,20 +10,6 @@ app.get('/' , function(req, res){
     res.sendFile(__dirname+'/public/index.html');
 });
 
-
-if ("local" == process.env.NODE_ENV) {
-  const https = require('https');
-  const fs = require('fs');
-  const serverConfig = {
-    // SSL証明書、環境に合わせてパスを変更する
-    key: fs.readFileSync('privkey.pem'),
-    cert: fs.readFileSync('cert.pem')
-  };
-} else {
-  const port = 80;
-  app.listen(port);
-}
-
 // 接続リスト
 let connections = [];
 

@@ -9,5 +9,3 @@ services:
     stdin_open: true
     ports:
       - 80:80
-    environment:
-      NODE_ENV: local
