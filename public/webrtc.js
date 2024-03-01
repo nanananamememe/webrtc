@@ -4,8 +4,6 @@ let sc, pc, queue;
 
 var socketio = io();
 
-//const sslPort = 443;
-const sslPort = 8080;
 const peerConnectionConfig = {
   iceServers: [
     // GoogleのパブリックSTUNサーバーを指定しているが自前のSTUNサーバーに変更可
@@ -84,9 +82,6 @@ function startServerConnection(localId, remoteId) {
     socketio.emit('message', JSON.stringify({ping: 1}));
   }, 30000);
 
-  if (socketio) {
-    socketio.close();
-  }
   // サーバー接続の開始
   socketio.on('message', gotMessageFromServer);
   socketio.emit("message", JSON.stringify({open: {local: localId, remote: remoteId}}));
